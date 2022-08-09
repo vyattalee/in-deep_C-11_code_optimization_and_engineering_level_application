@@ -23,7 +23,9 @@ namespace detail
     {
         static int call(std::tuple<Args...> const& t, T&& val)
         {
-            return (std::get<I - 1>(t) == val) ? I - 1 :
+            //return (std::get<I - 1>(t) == val) ? I - 1 :
+            //    find_index<I - 1, T, Args...>::call(t, std::forward<T>(val));
+			return compare(std::get<I - 1>(t) , val) ? I - 1 :
                 find_index<I - 1, T, Args...>::call(t, std::forward<T>(val));
         }
     };
@@ -33,7 +35,8 @@ namespace detail
     {
         static int call(std::tuple<Args...> const& t, T&& val)
         {
-            return (std::get<0>(t) == val) ? 0 : -1;
+            //return (std::get<0>(t) == val) ? 0 : -1;
+			return compare(std::get<0>(t) , val) ? 0 : -1;
         }
     };
 }
@@ -46,10 +49,12 @@ int find_index(std::tuple<Args...> const& t, T&& val)
 
 int main()
 {
-    std::tuple<int, int, int, int, double, int> a(2, 3, 1, 4, 5.0, 7);
+    std::tuple<int, int, int, int, double, int, std::string> a(2, 3, 1, 4, 5.0, 7, "8.0");
     std::cout << find_index(a, 1) << std::endl; // Prints 2
     std::cout << find_index(a, 2) << std::endl; // Prints 0
 	std::cout << find_index(a, 7) << std::endl; // Prints 5
-    std::cout << find_index(a, 5.0) << std::endl; // Prints 4 (not found)
+    std::cout << find_index(a, 5.0) << std::endl; // Prints 4 
 	std::cout << find_index(a, 6) << std::endl; // Prints -1 (not found)
+	std::cout << find_index(a, 8.0) << std::endl; // Prints -1 (not found)
+	std::cout << find_index(a, "8.0") << std::endl; // Prints 6 
 }
